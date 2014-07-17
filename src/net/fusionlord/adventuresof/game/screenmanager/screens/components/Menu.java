@@ -5,7 +5,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.util.Log;
 
 import java.util.List;
 import java.util.ArrayList;
