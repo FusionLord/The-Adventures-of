@@ -5,7 +5,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.GUIContext;
 
 /**
@@ -14,22 +13,24 @@ import org.newdawn.slick.gui.GUIContext;
  */
 public class TextField extends BaseComponent
 {
-	private static final int INITIAL_KEY_REPEAT_INTERVAL = 400;
-	private static final int KEY_REPEAT_INTERVAL = 50;
-	private int maxCharacter = 10000;
-	private String value = "";
-	private Font font;
-	private Color border = Color.white;
-	private Color text = Color.white;
-	private Color background = Color.black;
-	private int cursorPos;
-	private boolean visibleCursor = true;
-	private int lastKey = -1;
-	private char lastChar = 0;
-	private long repeatTimer;
+
+	private static final int     INITIAL_KEY_REPEAT_INTERVAL = 400;
+	private static final int     KEY_REPEAT_INTERVAL         = 50;
+	private              int     maxCharacter                = 10000;
+	private              String  value                       = "";
+	private              Color   border                      = Color.white;
+	private              Color   text                        = Color.white;
+	private              Color   background                  = Color.black;
+	private              boolean realFocus                   = false;
+	private              boolean visibleCursor               = true;
+	private              int     lastKey                     = -1;
+	private              char    lastChar                    = 0;
+	private				 int	 lastUpdate;
+	private long   repeatTimer;
 	private String oldText;
-	private int oldCursorPos;
-	private boolean realFocus = false;
+	private int    cursorPos;
+	private int    oldCursorPos;
+	private Font   font;
 
 	public TextField(GUIContext container)
 	{
@@ -39,7 +40,13 @@ public class TextField extends BaseComponent
 
 	@Override
 	protected void onUpdate(GUIContext container, int delta)
-	{}
+	{
+		if ((lastUpdate += delta) >= 500)
+		{
+			lastUpdate = 0;
+			visibleCursor = !visibleCursor;
+		}
+	}
 
 	@Override
 	protected void handleInput(Input input)
@@ -69,16 +76,15 @@ public class TextField extends BaseComponent
 		}
 	}
 
-	public void draw(GUIContext container, Graphics g)
+	@Override
+	public void drawBackground(GUIContext container, Graphics g)
 	{
-		Rectangle oldClip = g.getClip();
-		g.setWorldClip(getX(), getY(), getWidth(), getHeight());
+		g.setColor(background);
+		g.fillRect(getX(), getY(), getWidth(), getHeight());
+	}
 
-		if (background != null)
-		{
-			g.setColor(background);
-			g.fillRect(getX(), getY(), getWidth(), getHeight());
-		}
+	public void drawForeground(GUIContext container, Graphics g)
+	{
 		g.setColor(text);
 		int cpos = font.getWidth(value.substring(0, cursorPos));
 		int tx = 0;
@@ -103,8 +109,6 @@ public class TextField extends BaseComponent
 			g.drawRect(getX(), getY(), getWidth(), getHeight());
 		}
 		g.setColor(text);
-		g.clearWorldClip();
-		g.setClip(oldClip);
 	}
 
 	public String getText()
@@ -143,6 +147,7 @@ public class TextField extends BaseComponent
 			value = value.substring(0, maxCharacter);
 		}
 	}
+
 	protected void doPaste(String text)
 	{
 		recordOldPosition();
@@ -231,7 +236,7 @@ public class TextField extends BaseComponent
 				}
 			}
 			else if (key == Input.KEY_BACK)
-				{
+			{
 				if ((cursorPos > 0) && (value.length() > 0))
 				{
 					if (cursorPos < value.length())
@@ -250,7 +255,7 @@ public class TextField extends BaseComponent
 			{
 				if (value.length() > cursorPos)
 				{
-					value = value.substring(0,cursorPos) + value.substring(cursorPos+1);
+					value = value.substring(0, cursorPos) + value.substring(cursorPos + 1);
 				}
 			}
 			else if ((c < 127) && (c > 31) && (value.length() < maxCharacter))

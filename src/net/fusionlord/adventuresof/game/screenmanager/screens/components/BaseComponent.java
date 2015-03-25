@@ -3,6 +3,7 @@ package net.fusionlord.adventuresof.game.screenmanager.screens.components;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.GUIContext;
 
@@ -12,8 +13,12 @@ import org.newdawn.slick.gui.GUIContext;
  */
 public abstract class BaseComponent extends AbstractComponent
 {
-	private int x, y, width, height;
-	private boolean selected, hovered, down, disabled;
+
+	private int     x;
+	private int     y;
+	private int     width;
+	private int     height;
+	private boolean selected, hovered, down, disabled, needsUpdate;
 	private Action action;
 
 	/**
@@ -45,7 +50,20 @@ public abstract class BaseComponent extends AbstractComponent
 		draw(container, g);
 	}
 
-	public abstract void draw(GUIContext container, Graphics g);
+	public final void draw(GUIContext container, Graphics g)
+	{
+		Rectangle oldClip = g.getClip();
+		g.setClip(getX(), getY(), getWidth(), getHeight());
+
+		drawBackground(container, g);
+		drawForeground(container, g);
+
+		g.setClip(oldClip);
+	}
+
+	public abstract void drawBackground(GUIContext container, Graphics g);
+
+	public abstract void drawForeground(GUIContext container, Graphics g);
 
 	@Override
 	public void setLocation(int x, int y)
@@ -58,6 +76,7 @@ public abstract class BaseComponent extends AbstractComponent
 	{
 		this.width = width;
 		this.height = height;
+		needsUpdate = true;
 	}
 
 	@Override
@@ -84,24 +103,14 @@ public abstract class BaseComponent extends AbstractComponent
 		return height;
 	}
 
-	public void setDown(boolean down)
-	{
-		this.down = down;
-	}
-
-	public void setSelected(boolean selected)
-	{
-		this.selected = selected;
-	}
-
-	public void setHovered(boolean hovered)
-	{
-		this.hovered = hovered;
-	}
-
 	public boolean getDown()
 	{
 		return down;
+	}
+
+	public void setDown(boolean down)
+	{
+		this.down = down;
 	}
 
 	public boolean getSelected()
@@ -109,9 +118,19 @@ public abstract class BaseComponent extends AbstractComponent
 		return selected;
 	}
 
+	public void setSelected(boolean selected)
+	{
+		this.selected = selected;
+	}
+
 	public boolean getHovered()
 	{
 		return hovered;
+	}
+
+	public void setHovered(boolean hovered)
+	{
+		this.hovered = hovered;
 	}
 
 	public boolean isMouseHovering(Input input)
@@ -147,5 +166,15 @@ public abstract class BaseComponent extends AbstractComponent
 	public void doAction()
 	{
 		action.doAction(this);
+	}
+
+	public boolean needsUpdate()
+	{
+		if (needsUpdate)
+		{
+			needsUpdate = false;
+			return true;
+		}
+		return false;
 	}
 }

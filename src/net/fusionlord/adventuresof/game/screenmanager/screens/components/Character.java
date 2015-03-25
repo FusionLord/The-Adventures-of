@@ -13,6 +13,7 @@ import org.newdawn.slick.gui.GUIContext;
 public class Character extends BaseComponent
 {
 	private Player player;
+
 	public Character(GUIContext container, Player player)
 	{
 		super(container);
@@ -25,36 +26,33 @@ public class Character extends BaseComponent
 
 	@Override
 	protected void handleInput(Input input)
-	{
-		if (isMouseHovering(input))
-		{
-			if (!getHovered())
-				setHovered(true);
-			if (input.isMousePressed(0))
-			{
-				if(!getSelected())
-					setSelected(true);
-			}
-		}
-		if (!isMouseHovering(input) && getHovered())
-			setHovered(false);
-	}
+	{}
 
 	@Override
-	public void draw(GUIContext container, Graphics g)
-	{
-		if(getDown() || getSelected())
-			g.setColor(Color.green);
-		else if (getHovered())
-			g.setColor(Color.yellow);
-		else
-			g.setColor(Color.darkGray);
+	public void drawBackground(GUIContext container, Graphics g)
+	{}
 
-		g.drawRoundRect(getX(), getY(), getWidth(), getHeight(), 6);
-		g.setColor(Color.yellow);
-		int strWidth = g.getFont().getWidth(player.getName());
-		g.drawString(player.getName(), getX() + getWidth() / 2 - strWidth / 2, getY() + 5);
-		player.draw(container, g);
+	@Override
+	public void drawForeground(GUIContext container, Graphics g)
+	{
+		player.drawOnCharacterComponent(container, g, this);
+		if (getDown() || getSelected())
+		{
+			g.setColor(Color.green);
+		}
+		else if (getHovered())
+		{
+			g.setColor(Color.yellow);
+		}
+		else
+		{
+			g.setColor(Color.darkGray);
+		}
+
+		int strWidth = g.getFont().getWidth(getName());
+		int strHeight = g.getFont().getHeight(getName());
+		g.drawString(getName(), getX() + getWidth() / 2 - strWidth / 2, getY() + 5);
+		g.drawRoundRect(getX(), getY(), getWidth() - 1, getHeight() - 1, 6);
 	}
 
 	public String getName()

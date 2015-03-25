@@ -1,11 +1,14 @@
 package net.fusionlord.adventuresof.game.screenmanager;
 
+import net.fusionlord.adventuresof.game.screenmanager.screens.DebugScreen;
+import net.fusionlord.adventuresof.game.util.Reference;
+import org.newdawn.slick.Game;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.util.Log;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: FusionLord
@@ -13,14 +16,25 @@ import java.util.ArrayList;
  */
 public class ScreenManager
 {
+
 	protected List<Screen> curScreens = new ArrayList<Screen>();
 	protected List<Screen> newScreens = new ArrayList<Screen>();
 	protected List<Screen> remScreens = new ArrayList<Screen>();
 
+	public DebugScreen debugScreen;
+
+	public ScreenManager (GUIContext container)
+	{
+		debugScreen = new DebugScreen(container, "DebugScreen");
+	}
+
 	public void update(GUIContext container, int delta)
 	{
+		debugScreen.addInfo(String.format("FPS: %s", ((GameContainer) container).getFPS()));
 		for (Screen screen : newScreens)
+		{
 			curScreens.add(screen);
+		}
 		newScreens.clear();
 
 		for (Screen screen : remScreens)
@@ -31,8 +45,13 @@ public class ScreenManager
 		remScreens.clear();
 
 		for (Screen screen : curScreens)
+		{
 			if (screen.isFocused())
+			{
 				screen.update(container, delta);
+			}
+		}
+		debugScreen.update(container, delta);
 	}
 
 	public void Draw(GUIContext container, Graphics g)
@@ -40,8 +59,11 @@ public class ScreenManager
 		for (Screen screen : curScreens)
 		{
 			if (screen.isFocused())
+			{
 				screen.draw(container, g);
+			}
 		}
+		debugScreen.draw(container, g);
 	}
 
 	public void AddScreen(Screen screen)
@@ -51,12 +73,18 @@ public class ScreenManager
 		newScreens.add(screen);
 
 		for (Screen s : curScreens)
+		{
 			if (s.isFocused())
+			{
 				s.setFocused(false);
+			}
+		}
 	}
 
 	public void RemoveScreen(Screen screen)
 	{
+		if (screen == debugScreen)
+			return;
 		remScreens.add(screen);
 	}
 }

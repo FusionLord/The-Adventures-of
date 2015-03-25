@@ -5,7 +5,6 @@ import net.fusionlord.adventuresof.game.util.Textures;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.opengl.Texture;
 
@@ -15,20 +14,19 @@ import org.newdawn.slick.opengl.Texture;
  */
 public class Button extends BaseComponent
 {
+
 	private Texture normalTexture, hoverTexture, downTexture;
 	private String text;
 
-	/***
-	 *
+	/**
 	 * @param container The parent container;
-	 * @param x The x coordinate of this button;
-	 * @param y The y coordinate of this button;
-	 * @param width The width of this button;
-	 * @param height The height of this button;
-	 * @param text The text displayed on the button;
-	 * @param texture The name texture of the button. (Ex: *.png *_hover.png *_down.png)
-	 * @param action The action the the button that preforms;
-	 *
+	 * @param x         The x coordinate of this button;
+	 * @param y         The y coordinate of this button;
+	 * @param width     The width of this button;
+	 * @param height    The height of this button;
+	 * @param text      The text displayed on the button;
+	 * @param texture   The name texture of the button. (Ex: *.png *_hover.png *_down.png)
+	 * @param action    The action the the button that preforms;
 	 */
 	public Button(GUIContext container, int x, int y, int width, int height, String text, String texture, Action action)
 	{
@@ -49,14 +47,18 @@ public class Button extends BaseComponent
 	@Override
 	protected void handleInput(Input input)
 	{
-		if(isMouseHovering(input))
+		if (isMouseHovering(input))
 		{
-			if(!input.isMouseButtonDown(0))
+			if (!input.isMouseButtonDown(0))
 			{
 				if (!getHovered())
+				{
 					setHovered(true);
+				}
 				if (getDown())
+				{
 					setDown(false);
+				}
 			}
 			else
 			{
@@ -74,11 +76,9 @@ public class Button extends BaseComponent
 	}
 
 	@Override
-	public void draw(GUIContext container, Graphics g)
+	public void drawBackground(GUIContext container, Graphics g)
 	{
-		Rectangle oldClip = g.getClip();
-		g.setClip(getX(), getY(), getWidth(), getHeight());
-		if (getDown())
+		if (getDown() && !isEnabled())
 		{
 			Textures.drawTexture(g, downTexture, getX(), getY());
 		}
@@ -90,8 +90,16 @@ public class Button extends BaseComponent
 		{
 			Textures.drawTexture(g, normalTexture, getX(), getY());
 		}
+	}
+
+	@Override
+	public void drawForeground(GUIContext container, Graphics g)
+	{
 		Font font = g.getFont();
-		g.drawString(text, getX() + (getWidth() / 2 - font.getWidth(text) / 2), getY() + (getHeight() / 2 - font.getHeight(text) / 2));
-		g.setClip(oldClip);
+		g.drawString(
+				text,
+				getX() + (getWidth() / 2 - font.getWidth(text) / 2),
+				getY() + (getHeight() / 2 - font.getHeight(text) / 2)
+		);
 	}
 }

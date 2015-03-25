@@ -6,5 +6,6 @@ package net.fusionlord.adventuresof.game.screenmanager.screens.components;
  */
 public abstract class Action
 {
+
 	public abstract void doAction(BaseComponent component);
 }

@@ -1,12 +1,8 @@
 package net.fusionlord.adventuresof.game.screenmanager.screens;
 
 import net.fusionlord.adventuresof.game.screenmanager.Screen;
-import org.lwjgl.input.Cursor;
-import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.opengl.ImageData;
 
 /**
  * Author: FusionLord
@@ -14,6 +10,7 @@ import org.newdawn.slick.opengl.ImageData;
  */
 public class NewMapScreen extends Screen
 {
+
 	public NewMapScreen(GUIContext container)
 	{
 		super(container, "new_map");
@@ -32,7 +29,7 @@ public class NewMapScreen extends Screen
 	}
 
 	@Override
-	public void draw(GUIContext container, Graphics g)
+	public void drawForeground(GUIContext container, Graphics g)
 	{
 
 	}

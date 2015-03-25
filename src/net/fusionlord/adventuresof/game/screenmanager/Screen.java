@@ -1,10 +1,7 @@
 package net.fusionlord.adventuresof.game.screenmanager;
 
 import org.lwjgl.input.Cursor;
-import org.newdawn.slick.Font;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.gui.GUIContext;
 import org.newdawn.slick.opengl.ImageData;
 
@@ -14,9 +11,11 @@ import org.newdawn.slick.opengl.ImageData;
  */
 public abstract class Screen implements GUIContext
 {
-	public GUIContext container;
-	public String screenName;
-	private boolean focused;
+
+	public  GUIContext	container;
+	public  String		screenName;
+	private boolean		focused;
+	protected Color		backgroundColor;
 
 	public Screen(GUIContext container, String name)
 	{
@@ -25,8 +24,22 @@ public abstract class Screen implements GUIContext
 	}
 
 	public abstract void init(GUIContext container);
+
 	public abstract void update(GUIContext container, int delta);
-	public abstract void draw(GUIContext container, Graphics g);
+
+	public final void draw(GUIContext container, Graphics g)
+	{
+		drawBackground(container, g);
+		drawForeground(container, g);
+	}
+
+	protected void drawBackground(GUIContext container, Graphics g)
+	{
+		g.setColor(backgroundColor);
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+
+	protected abstract void drawForeground(GUIContext container, Graphics g);
 
 	@Override
 	public Input getInput()

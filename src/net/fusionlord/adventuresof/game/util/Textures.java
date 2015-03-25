@@ -16,47 +16,24 @@ import java.io.IOException;
  */
 public class Textures
 {
-	public Texture worldTexture;
-	public Texture missingTexture;
 
 	private static final String PNG = "PNG";
+	public static Texture missingTexture;
 
 	public Textures()
 	{
-		changeWorldTileset(0);
 		try
 		{
-			missingTexture = TextureLoader.getTexture(PNG, ResourceLoader.getResourceAsStream("assets/textures/missing.png"), GL11.GL_NEAREST);
+			missingTexture = TextureLoader.getTexture(
+					PNG, ResourceLoader.getResourceAsStream(
+							"assets/textures/missing.png"
+					), GL11.GL_NEAREST
+			);
 		}
-		catch(IOException e)
+		catch (IOException e)
 		{
 			Log.error("NO MISSING TEXTURE FOUND!", e);
 		}
-	}
-
-	public Texture getTexture(String filename)
-	{
-		try
-		{
-			return TextureLoader.getTexture(PNG, ResourceLoader.getResourceAsStream("assets/textures/".concat(filename)), GL11.GL_NEAREST);
-		}
-		catch(IOException e)
-		{
-			Log.error("Could not find \"assets/textures/".concat(filename).concat("\" using missing texture."), e);
-		}
-		return missingTexture;
-	}
-
-	public boolean changeWorldTileset(int tileset)
-	{
-		Texture tempTexture = getTexture("world/tileset".concat(String.valueOf(tileset)).concat(".png"));
-		if (tempTexture != null)
-		{
-			worldTexture = tempTexture;
-			return true;
-		}
-		Log.error(String.format("Unable to load tile set %s.", tileset));
-		return false;
 	}
 
 	public static void drawTexture(Graphics g, Texture texture, int x, int y)
@@ -74,10 +51,10 @@ public class Textures
 		g.setColor(Color.white);
 		texture.bind();
 
-		float uMinf = uMin / (float)texture.getTextureWidth();
-		float uMaxf = uMax / (float)texture.getTextureWidth();
-		float vMinf = vMin / (float)texture.getTextureHeight();
-		float vMaxf = vMax / (float)texture.getTextureHeight();
+		float uMinf = uMin / (float) texture.getTextureWidth();
+		float uMaxf = uMax / (float) texture.getTextureWidth();
+		float vMinf = vMin / (float) texture.getTextureHeight();
+		float vMaxf = vMax / (float) texture.getTextureHeight();
 
 		GL11.glBegin(GL11.GL_QUADS);
 		GL11.glTexCoord2f(uMinf, vMinf);
@@ -89,5 +66,27 @@ public class Textures
 		GL11.glTexCoord2f(uMinf, vMinf + vMaxf);
 		GL11.glVertex2f(x, y + height);
 		GL11.glEnd();
+	}
+
+	public static Texture getTexture(String filename)
+	{
+		try
+		{
+			return TextureLoader.getTexture(
+					PNG,
+					ResourceLoader.getResourceAsStream("assets/textures/".concat(filename)),
+					GL11.GL_NEAREST
+			);
+		}
+		catch (IOException e)
+		{
+			Log.error("Could not find \"assets/textures/".concat(filename).concat("\" using missing texture."), e);
+		}
+		return missingTexture;
+	}
+
+	public static TileTexture getSkin(int skinIdx)
+	{
+		return new TileTexture(getTexture("characters/charset".concat(String.valueOf(skinIdx)).concat(".png")));
 	}
 }
